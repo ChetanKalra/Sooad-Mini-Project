@@ -2,10 +2,17 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.mysql.jdbc.Connection;
+
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import java.awt.SystemColor;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 import javax.swing.JLabel;
 import javax.swing.JButton;
 
@@ -18,7 +25,7 @@ public class TicketGeneration extends JFrame {
 	private JPanel contentPane;
 	private static final long serialVersionUID = 5462223600l;
 	private JTextField txtTicketGenerator;
-	private JTextField textFiedmovsel;
+	private JTextField textFieldmovsel;
 	private JLabel lbltimesel;
 	private JTextField textFieldtime;
 	private JLabel lblscreenno;
@@ -44,6 +51,27 @@ public class TicketGeneration extends JFrame {
 				}
 			}
 		});
+	}
+	
+	public void fillTextBox(){
+		try{
+			Connection conn = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/Movie_Ticket","root","");
+			String query="Select * from Booked_Tickets order by id DESC limit 1;";
+			Statement stmt = conn.createStatement();
+			ResultSet rs= stmt.executeQuery(query);
+			
+			while(rs.next()){
+				textFieldmovsel.setText(rs.getString("Movie_Name"));
+				textFieldtime.setText(rs.getString("Timings"));
+				textFieldscreen.setText(rs.getString("Screen_No"));
+				textFieldseat.setText(rs.getString("No_of_Seats"));
+				textFieldtotalcost.setText(rs.getString("Total_Price"));
+				//Screen_no.addItem(rs.getString("Screen_Id"));
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -75,13 +103,13 @@ public class TicketGeneration extends JFrame {
 		lblmov.setBounds(34, 133, 116, 28);
 		contentPane.add(lblmov);
 		
-		textFiedmovsel = new JTextField();
-		textFiedmovsel.setEditable(false);
+		textFieldmovsel = new JTextField();
+		textFieldmovsel.setEditable(false);
 		
-		textFiedmovsel.setFont(new Font("Times New Roman", Font.PLAIN, 13));
-		textFiedmovsel.setBounds(166, 133, 238, 28);
-		contentPane.add(textFiedmovsel);
-		textFiedmovsel.setColumns(10);
+		textFieldmovsel.setFont(new Font("Times New Roman", Font.PLAIN, 13));
+		textFieldmovsel.setBounds(166, 133, 238, 28);
+		contentPane.add(textFieldmovsel);
+		textFieldmovsel.setColumns(10);
 		
 		lbltimesel = new JLabel("Timings Selected");
 		lbltimesel.setFont(new Font("Times New Roman", Font.BOLD, 14));
@@ -127,6 +155,8 @@ public class TicketGeneration extends JFrame {
 		textFieldtotalcost.setBounds(166, 333, 238, 28);
 		contentPane.add(textFieldtotalcost);
 		textFieldtotalcost.setColumns(10);
+		
+		fillTextBox();
 		
 		btnPrint = new JButton("Print");
 		btnPrint.setFont(new Font("Times New Roman", Font.BOLD, 15));

@@ -6,6 +6,10 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.PreparedStatement;
+
 import javax.swing.JLabel;
 
 import java.awt.Font;
@@ -22,6 +26,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 //import javax.swing.JComboBox;
@@ -30,6 +38,7 @@ import javax.swing.DefaultComboBoxModel;
 //import java.awt.SystemColor;
 //import java.awt.event.MouseAdapter;
 //import java.awt.event.MouseEvent;
+import java.sql.*;
 
 
 
@@ -38,8 +47,12 @@ public class BookMovie1 extends JFrame {
 	private JPanel contentPane;
 	private static final long serialVersionUID = 5462223600l;
 	public static JTextField textFieldseat;
-	public static JTextField textFieldper;
+	public static JTextField textfieldPer;
 	public static JTextField textFieldtotal;
+	private JComboBox<String> Movie_name;
+	public static JTextField textFieldScreen;
+	private JComboBox<String> Movie_Timing;
+
 
 	/**
 	 * Launch the application.
@@ -57,6 +70,22 @@ public class BookMovie1 extends JFrame {
 		});
 	}
 
+	public void fillComboBox(){
+		try{
+			Connection conn = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/Movie_Ticket","root","");
+			String query="Select Movie_Name from Movie;";
+			Statement stmt = conn.createStatement();
+			ResultSet rs= stmt.executeQuery(query);
+			
+			while(rs.next()){
+				Movie_name.addItem(rs.getString("Movie_Name"));
+				//Screen_no.addItem(rs.getString("Screen_Id"));
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * Create the frame.
 	 */
@@ -87,7 +116,7 @@ public class BookMovie1 extends JFrame {
 		contentPane.add(lblseat);
 		
 		textFieldseat = new JTextField();
-		textFieldseat.setBounds(156, 228, 237, 28);
+		textFieldseat.setBounds(159, 228, 237, 28);
 		contentPane.add(textFieldseat);
 		textFieldseat.setColumns(10);
 		
@@ -96,10 +125,11 @@ public class BookMovie1 extends JFrame {
 		lblNewLabel.setBounds(46, 284, 99, 28);
 		contentPane.add(lblNewLabel);
 		
-		textFieldper = new JTextField();
-		textFieldper.setBounds(159, 284, 237, 28);
-		contentPane.add(textFieldper);
-		textFieldper.setColumns(10);
+		textfieldPer = new JTextField();
+		textfieldPer.setEditable(false);
+		textfieldPer.setBounds(159, 284, 237, 28);
+		contentPane.add(textfieldPer);
+		textfieldPer.setColumns(10);
 		
 		JLabel lbltotal = new JLabel("Total Price");
 		lbltotal.setFont(new Font("Times New Roman", Font.BOLD, 14));
@@ -115,7 +145,7 @@ public class BookMovie1 extends JFrame {
 					int seat,price,total;
 					
 					  seat=Integer.parseInt(textFieldseat.getText());
-					  price=Integer.parseInt(textFieldper.getText());
+					  price=Integer.parseInt(textfieldPer.getText());
 					  total=seat*price;
 					  textFieldtotal.setText(Integer.toString(total));
 				
@@ -133,6 +163,18 @@ public class BookMovie1 extends JFrame {
 		btnProcced.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try{
+					
+					Connection conn = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/Movie_Ticket","root","");
+					String query="insert into Booked_Tickets(Movie_Name,Timings, Screen_No,No_of_Seats, Total_Price) Values(?,?,?,?,?)";
+					PreparedStatement pst= (PreparedStatement) conn.prepareStatement(query);
+					//Statement stmt = conn.createStatement();
+					pst.setString(1, (String) Movie_name.getSelectedItem());
+					pst.setString(2, (String) Movie_Timing.getSelectedItem());
+					pst.setString(3, (String) textFieldScreen.getText());
+					pst.setString(4, (String) textFieldseat.getText());
+					pst.setString(5, (String) textFieldtotal.getText());
+					pst.execute();
+					
 					TicketGeneration tg=new TicketGeneration();
 					tg.setVisible(true);
 				}catch(Exception e){
@@ -152,7 +194,7 @@ public class BookMovie1 extends JFrame {
 				if(p==0){
 					JOptionPane.showMessageDialog(null, "Deleted");
 					textFieldseat.setText("");
-					textFieldper.setText("");
+					textfieldPer.setText("");
 					textFieldtotal.setText("");
 					
 				}
@@ -168,20 +210,48 @@ public class BookMovie1 extends JFrame {
 		lblscreenno.setBounds(49, 172, 99, 28);
 		contentPane.add(lblscreenno);
 		
-		JComboBox<String> comboBox = new JComboBox<>();
-		comboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"Sultan", "Rustum", "Mohenjo daro"}));
-		comboBox.setBounds(161, 59, 232, 27);
-		contentPane.add(comboBox);
+		Movie_name = new JComboBox<>();
+		Movie_name.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try{
+					Connection conn = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/Movie_Ticket","root","");
+					String query="Select * from Movie where Movie_Name=?";
+					//Statement stmt = conn.createStatement();
+					PreparedStatement pst = (PreparedStatement) conn.prepareStatement(query);
+					pst.setString(1, (String) Movie_name.getSelectedItem());
+					//pst.setInt(1, 3);
+					//Statement stmt = conn.createStatement();
+					ResultSet rs= pst.executeQuery();
+					
+					while(rs.next())
+					{
+						textFieldScreen.setText(rs.getString("Screen_Id"));
+						textfieldPer.setText(rs.getString("Movie_Price"));
+						
+					}
+				}
+				catch(Exception ex){
+					ex.printStackTrace();
+				}
+			}
+		});
+		Movie_name.setBounds(161, 59, 232, 27);
+		contentPane.add(Movie_name);
 		
-		JComboBox<String> comboBox_1 = new JComboBox<>();
-		comboBox_1.setModel(new DefaultComboBoxModel<String>(new String[] {"First", "Second", "Third"}));
-		comboBox_1.setBounds(161, 118, 232, 27);
-		contentPane.add(comboBox_1);
+		textFieldScreen = new JTextField();
+		textFieldScreen.setEditable(false);
+		textFieldScreen.setBounds(159, 172, 237, 28);
+		contentPane.add(textFieldScreen);
+		textFieldScreen.setColumns(10);
 		
-		JComboBox<String> comboBox_2 = new JComboBox<>();
-		comboBox_2.setModel(new DefaultComboBoxModel<String>(new String[] {"1", "2", "3"}));
-		comboBox_2.setBounds(161, 174, 232, 27);
-		contentPane.add(comboBox_2);
+		fillComboBox();
+		
+		Movie_Timing = new JComboBox<>();
+		Movie_Timing.setModel(new DefaultComboBoxModel<String>(new String[] {"First", "Second", "Third"}));
+		Movie_Timing.setBounds(161, 118, 232, 27);
+		contentPane.add(Movie_Timing);
+		
+		
 		
 		
 	}
