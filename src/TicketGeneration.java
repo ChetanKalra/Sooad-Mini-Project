@@ -76,6 +76,7 @@ public class TicketGeneration extends JFrame {
 		contentPane.add(lblmov);
 		
 		textFiedmovsel = new JTextField();
+		textFiedmovsel.setEditable(false);
 		
 		textFiedmovsel.setFont(new Font("Times New Roman", Font.PLAIN, 13));
 		textFiedmovsel.setBounds(166, 133, 238, 28);
@@ -88,6 +89,7 @@ public class TicketGeneration extends JFrame {
 		contentPane.add(lbltimesel);
 		
 		textFieldtime = new JTextField();
+		textFieldtime.setEditable(false);
 		textFieldtime.setBounds(166, 183, 238, 28);
 		contentPane.add(textFieldtime);
 		textFieldtime.setColumns(10);
@@ -98,6 +100,7 @@ public class TicketGeneration extends JFrame {
 		contentPane.add(lblscreenno);
 		
 		textFieldscreen = new JTextField();
+		textFieldscreen.setEditable(false);
 		textFieldscreen.setBounds(166, 233, 238, 28);
 		contentPane.add(textFieldscreen);
 		textFieldscreen.setColumns(10);
@@ -108,6 +111,7 @@ public class TicketGeneration extends JFrame {
 		contentPane.add(lblseatbook);
 		
 		textFieldseat = new JTextField();
+		textFieldseat.setEditable(false);
 		textFieldseat.setBounds(166, 283, 238, 28);
 		contentPane.add(textFieldseat);
 		textFieldseat.setColumns(10);
@@ -118,6 +122,7 @@ public class TicketGeneration extends JFrame {
 		contentPane.add(lbltotalcost);
 		
 		textFieldtotalcost = new JTextField();
+		textFieldtotalcost.setEditable(false);
 		
 		textFieldtotalcost.setBounds(166, 333, 238, 28);
 		contentPane.add(textFieldtotalcost);

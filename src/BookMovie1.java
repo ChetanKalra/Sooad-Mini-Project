@@ -107,6 +107,7 @@ public class BookMovie1 extends JFrame {
 		contentPane.add(lbltotal);
 		
 		textFieldtotal = new JTextField();
+		textFieldtotal.setEditable(false);
 		textFieldtotal.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
 				try {
