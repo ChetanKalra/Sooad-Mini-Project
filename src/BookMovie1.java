@@ -163,20 +163,55 @@ public class BookMovie1 extends JFrame {
 		btnProcced.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try{
+					String time= (String) Movie_Timing.getSelectedItem();
 					
+					String seats= textFieldseat.getText();
+					int seat= Integer.parseInt(seats);
 					Connection conn = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/Movie_Ticket","root","");
-					String query="insert into Booked_Tickets(Movie_Name,Timings, Screen_No,No_of_Seats, Total_Price) Values(?,?,?,?,?)";
-					PreparedStatement pst= (PreparedStatement) conn.prepareStatement(query);
-					//Statement stmt = conn.createStatement();
-					pst.setString(1, (String) Movie_name.getSelectedItem());
-					pst.setString(2, (String) Movie_Timing.getSelectedItem());
-					pst.setString(3, (String) textFieldScreen.getText());
-					pst.setString(4, (String) textFieldseat.getText());
-					pst.setString(5, (String) textFieldtotal.getText());
-					pst.execute();
 					
-					TicketGeneration tg=new TicketGeneration();
-					tg.setVisible(true);
+					
+					StringBuilder query1 =  new  StringBuilder(" Select ");
+					query1.append(time);
+					query1.append(" from Screen where Screen_Id=? ");
+					String query2= query1.toString();
+					
+					
+					PreparedStatement pst1= (PreparedStatement) conn.prepareStatement(query2);
+					pst1.setString(1, (String) textFieldScreen.getText());
+					ResultSet rs1= pst1.executeQuery();
+					while(rs1.next())
+					{
+						String avail_seats= rs1.getString(time);
+						int avail= Integer.parseInt(avail_seats);
+						avail=avail-seat;
+						//String Available_Seats= Integer.toString(avail);
+						if(avail<0)
+						{
+							JOptionPane.showMessageDialog(null, "Seats Available: "+avail_seats);
+							textFieldseat.setText(null);
+							textFieldtotal.setText(null);
+						}
+						else{
+							String query="insert into Booked_Tickets(Movie_Name,Timings, Screen_No,No_of_Seats, Total_Price) Values(?,?,?,?,?)";
+							PreparedStatement pst= (PreparedStatement) conn.prepareStatement(query);
+							pst.setString(1, (String) Movie_name.getSelectedItem());
+							pst.setString(2, (String) Movie_Timing.getSelectedItem());
+							pst.setString(3, (String) textFieldScreen.getText());
+							pst.setString(4, (String) textFieldseat.getText());
+							pst.setString(5, (String) textFieldtotal.getText());
+							pst.execute();
+	
+							String query3="update Screen set "+time+" =" +avail+" where Screen_Id=?";
+							PreparedStatement pst2= (PreparedStatement) conn.prepareStatement(query3);
+							pst2.setString(1, (String) textFieldScreen.getText());
+							pst2.execute();
+							TicketGeneration tg=new TicketGeneration();
+							tg.setVisible(true);
+							//JOptionPane.showMessageDialog(null, query3);
+						}
+						
+					}
+					
 				}catch(Exception e){
 					JOptionPane.showMessageDialog(null,"Fill The Information");
 				}
