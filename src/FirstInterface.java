@@ -54,6 +54,13 @@ public class FirstInterface {
 		frame1.getContentPane().setLayout(null);
 		
 		JButton btnaddmov = new JButton("Add Movie");
+		btnaddmov.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Login am=new Login();
+				am.setVisible(true);
+			}
+		});
 		btnaddmov.setBackground(Color.WHITE);
 		btnaddmov.setForeground(Color.BLACK);
 		btnaddmov.setFont(new Font("Times New Roman", Font.BOLD, 15));

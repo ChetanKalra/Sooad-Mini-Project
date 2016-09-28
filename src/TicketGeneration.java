@@ -14,7 +14,10 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 
@@ -89,6 +92,7 @@ public class TicketGeneration extends JFrame {
 		contentPane.setLayout(null);
 		
 		txtTicketGenerator = new JTextField();
+		txtTicketGenerator.setEditable(false);
 		txtTicketGenerator.setBorder(null);
 		txtTicketGenerator.setText("TICKET GENERATOR");
 		txtTicketGenerator.setHorizontalAlignment(SwingConstants.CENTER);
@@ -159,6 +163,16 @@ public class TicketGeneration extends JFrame {
 		fillTextBox();
 		
 		btnPrint = new JButton("Print");
+		btnPrint.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try{
+					JOptionPane.showMessageDialog(null, "Ticket Generated");
+				}
+				catch(Exception ex){
+					ex.printStackTrace();
+				}
+			}
+		});
 		btnPrint.setFont(new Font("Times New Roman", Font.BOLD, 15));
 		btnPrint.setBounds(315, 378, 89, 28);
 		contentPane.add(btnPrint);

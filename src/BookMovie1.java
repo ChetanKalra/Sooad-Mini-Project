@@ -146,9 +146,15 @@ public class BookMovie1 extends JFrame {
 					
 					  seat=Integer.parseInt(textFieldseat.getText());
 					  price=Integer.parseInt(textfieldPer.getText());
-					  total=seat*price;
-					  textFieldtotal.setText(Integer.toString(total));
-				
+					  if(seat>0)
+					  {
+						  total=seat*price;
+						  textFieldtotal.setText(Integer.toString(total));  
+					  }
+					  else{
+						  JOptionPane.showMessageDialog(null, "Invalid Seats Entered");
+					  }
+					  
 				}catch(Exception e)
 				{
 					JOptionPane.showMessageDialog(null, "Please Enter The Information");
@@ -222,7 +228,7 @@ public class BookMovie1 extends JFrame {
 		btnProcced.setBounds(159, 396, 89, 28);
 		contentPane.add(btnProcced);
 		
-		JButton btncancel = new JButton("Cancel");
+		JButton btncancel = new JButton("Reset");
 		btncancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int p=JOptionPane.showConfirmDialog(null, "Do you really want to Cancel?","Cancel",JOptionPane.YES_NO_OPTION);
